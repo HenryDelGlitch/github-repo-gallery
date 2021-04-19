@@ -11,6 +11,10 @@ const repoInformation = document.querySelector(".repos");
 //Shows one repo in the section
 const singleRepo = document.querySelector(".repo-data");
 
+const backButton = document.querySelector(".view-repos");
+
+const filterInput = document.querySelector(".filter-repos");
+
 const gitInfo = async function(){
     const userInfo = await fetch(`https://api.github.com/users/${username}`);
     const rec = await userInfo.json();
@@ -41,6 +45,23 @@ const gitRepos = async function(){
     const repoData = await repos.json();
     displayRepos(repoData);
 };
+
+filterInput.classList.remove("hide");
+
+filterInput.addEventListener("input", function(e){
+    const search = e.target.value;
+    const repos = document.querySelectorAll(".repo");
+    const lowerSearch = search.toLowerCase();
+
+    for (const repoSearch of repos){
+        const lowerInner = repoSearch.innerText.toLowerCase();
+        if(lowerInner.includes(lowerSearch)){
+            repoSearch.classList.remove("hide");
+        }else{
+            repoSearch.classList.add("hide");
+        };
+    };
+});
 
 const displayRepos = async function(repos){
     for(const projects of repos){
@@ -78,6 +99,7 @@ const showsRepoDetails = async function(repoInfo, languages){
     singleRepo.innerHTML = ``;
     singleRepo.classList.remove("hide");
     repoInformation.classList.add("hide");
+    backButton.classList.remove("hide");
     const div = document.createElement("div");
     div.innerHTML = `<h3>Name: ${repoInfo.name}</h3>
     <p>Description: ${repoInfo.description}</p>
@@ -86,3 +108,9 @@ const showsRepoDetails = async function(repoInfo, languages){
     <a class="visit" href="${repoInfo.html_url}" target="_blank" rel="noreferrer noopener">View Repo on GitHub!</a>`;
     singleRepo.append(div);
 };
+
+backButton.addEventListener("click", function(){
+    repoInformation.classList.remove("hide");
+    singleRepo.classList.add("hide");
+    backButton.classList.add("hide");
+});
